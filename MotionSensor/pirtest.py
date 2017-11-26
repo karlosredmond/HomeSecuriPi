@@ -1,5 +1,7 @@
 import RPi.GPIO as GPIO
 import time
+import requests
+
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(11, GPIO.IN)    ## Read output from PIR motion sensor
@@ -13,5 +15,7 @@ while True:
         time.sleep(0.1)
     elif i == 1:           ## When output from motion sensor is HIGH
         print("Intruder Detected" , i)
+        url = "http://192.168.1.6:5000/motion_detected"
         GPIO.output(3,1)   ## Turn ON LED
-        time.sleep(0.1)
+        requests.get(url)
+        time.sleep(5)
