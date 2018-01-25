@@ -1,4 +1,6 @@
 from flask import Flask, request
+from flask_cors import CORS, cross_origin
+from OpenSSL import SSL
 from threading import Thread
 import pygame
 import os
@@ -6,7 +8,10 @@ import os
 UPLOAD_FOLDER = 'static/MotionSensorImages'
 ALLOWED_EXTENSIONS = set(['jpg', 'wav'])
 
+context = SSL.Context(SSL.SSLv23_METHOD)
+
 app = Flask(__name__)
+CORS(app)
 
 import RPi.GPIO as GPIO
 import datetime
@@ -42,8 +47,7 @@ def thread_for_motion_sensor():
             time.sleep(5)
 
 thread = Thread(target = thread_for_motion_sensor)
-thread.start()
-##thread.join()
+##thread.start()
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -51,10 +55,11 @@ def allowed_file(filename):
 
 @app.route('/')
 def hello_world():
-    return 'Hello World'
+    return 'Hello World2'
 
 @app.route('/mic_test', methods=['GET', 'POST'])
 def mic_test():
+    print('Somewhere')
     if request.method == 'POST':
         if 'file' not in request.files:
             print("File Not in Request")
@@ -78,4 +83,5 @@ def mic_test():
 if __name__ == '__main__':
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     app.run(host = '0.0.0.0', port = 8081)
+    thread.join()
     
